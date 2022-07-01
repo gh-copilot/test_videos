@@ -23,11 +23,20 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Hocus_Pocus 
-            url: 'https://www.youtube.com/watch?v=40SXyDeXV9Y'
+#           - name: Hocus_Pocus
+#             url: 'https://www.youtube.com/watch?v=40SXyDeXV9Y'
 #             start: '0:05:20'
 #             end: '0:07:10'
 
+          - name: Peaky_Blinders
+            url: 'https://www.youtube.com/watch?v=LosFc1-eva4'
+          
+          - name: Avengers_Endgame
+            url: 'https://www.youtube.com/watch?v=SdC-4x0-ESc'
+          
+          - name: Hell_March_Indian_Army
+            url: 'https://www.youtube.com/watch?v=geKIYFkqkh0'
+          
     steps:
       - name: Checkout
         uses: actions/checkout@v3
