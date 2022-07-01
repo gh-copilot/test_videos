@@ -65,10 +65,7 @@ jobs:
           auto-activate-base: false
           activate-environment: feelback
           environment-file: requirements.yml
-      
-      - run: conda env list
-      - run: conda list
-      
+
       - name: Process Video
         run: python3 feelback_cli.py "${{ matrix.name }}.mp4" -o "${{ matrix.name }}_out.mp4" -vv -f "$FPS"
         
