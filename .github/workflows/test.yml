@@ -9,19 +9,24 @@ env:
   # 136 -> 720p
   # 137 -> 1080p
   RESOLUTION: 136
+  FPS: 30
 
 jobs:
   down:
     runs-on: ubuntu-latest
     name: "${{ matrix.name }}"
+    defaults:
+      run:
+        shell: bash -l {0}
+    
     strategy:
       fail-fast: false
       matrix:
         include:
           - name: Hocus_Pocus 
             url: 'https://www.youtube.com/watch?v=40SXyDeXV9Y'
-            start: '0:05:20'
-            end: '0:07:10'
+#             start: '0:05:20'
+#             end: '0:07:10'
 
     steps:
       - name: Checkout
@@ -50,23 +55,33 @@ jobs:
         run: |
           # $CONDA is an environment variable pointing to the root of the miniconda directory
           echo $CONDA/bin >> $GITHUB_PATH
-      
+
       - run: conda update -c defaults conda -y
-      - run: conda install -c conda-forge --file requirements.yml -y
       
-#       - name: Process Video
-#         run: |
+      - name: create environment with mamba
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          channels: conda-forge,defaults
+          auto-activate-base: false
+          activate-environment: feelback
+          environment-file: requirements.yml
+      
+      - run: conda env list
+      - run: conda list
+      
+      - name: Process Video
+        run: python3 feelback_cli.py "${{ matrix.name }}.mp4" -o "${{ matrix.name }}_out.mp4" -vv -f "$FPS"
         
       - run: ls -lRh
         continue-on-error: true
         if: always()
       
-#       - name: Release Files
-#         uses: softprops/action-gh-release@v1
-#         with:
-#           tag_name: "test"
-#           name: "Test"
-#           files: |
-#             *_out.mp4
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release Files
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "test"
+          name: "Test"
+          files: |
+            *_out.mp4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
