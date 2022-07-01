@@ -1,0 +1,71 @@
+name: test
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  # 136 -> 720p
+  # 137 -> 1080p
+  RESOLUTION: 136
+
+jobs:
+  down:
+    runs-on: ubuntu-latest
+    name: "${{ matrix.name }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Hocus_Pocus 
+            url: 'https://www.youtube.com/watch?v=40SXyDeXV9Y'
+            start: '0:05:20'
+            end: '0:07:10'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: ahmedx3/Feelback
+          token: ${{ secrets.TOKEN }}
+      
+      - name: Install Dependencies
+        run: |
+            sudo apt update
+            sudo apt install aria2 ffmpeg python3-mutagen python3-pycryptodome p7zip-full
+            sudo wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/bin/yt-dlp
+            sudo chmod a+rx /usr/bin/yt-dlp
+
+      - name: Download Video
+        run: yt-dlp -f "$RESOLUTION" -o "${{ matrix.name }}.mp4" "${{ matrix.url }}"
+
+      - name: Trim Video
+        run: |
+          ffmpeg -i "${{ matrix.name }}.mp4" -ss "${{ matrix.start }}" -to "${{ matrix.end }}" -c copy "${{ matrix.name }}_out.mp4"
+          mv "${{ matrix.name }}_out.mp4" "${{ matrix.name }}.mp4"
+
+      - name: Add conda to system path
+        run: |
+          # $CONDA is an environment variable pointing to the root of the miniconda directory
+          echo $CONDA/bin >> $GITHUB_PATH
+      
+      - run: conda update -c defaults conda -y
+      - run: conda install -c conda-forge -f requirements.yml -y
+      
+      - name: Process Video
+        run: |
+        
+      - run: ls -lRh
+        continue-on-error: true
+        if: always()
+      
+      - name: Release Files
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "test"
+          name: "Test"
+          files: |
+            *_out.mp4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
