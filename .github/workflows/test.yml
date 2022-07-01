@@ -9,7 +9,7 @@ env:
   # 136 -> 720p
   # 137 -> 1080p
   RESOLUTION: 136
-  FPS: 30
+  FPS: 'native'
 
 jobs:
   down:
@@ -60,23 +60,19 @@ jobs:
           ffmpeg -i "${{ matrix.name }}.mp4" -ss "${{ matrix.start }}" -to "${{ matrix.end }}" -c copy "${{ matrix.name }}_out.mp4"
           mv "${{ matrix.name }}_out.mp4" "${{ matrix.name }}.mp4"
 
-      - name: Add conda to system path
-        run: |
-          # $CONDA is an environment variable pointing to the root of the miniconda directory
-          echo $CONDA/bin >> $GITHUB_PATH
-
-      - run: conda update -c defaults conda -y
-      
-      - name: create environment with mamba
+      - name: create feelback conda environment
         uses: conda-incubator/setup-miniconda@v2
         with:
           channels: conda-forge,defaults
           auto-activate-base: false
+          auto-update-conda: true
           activate-environment: feelback
           environment-file: requirements.yml
 
+      - run: conda list
+      
       - name: Process Video
-        run: python3 feelback_cli.py "${{ matrix.name }}.mp4" -o "${{ matrix.name }}_out.mp4" -vv -f "$FPS"
+        run: python3 feelback_cli.py "${{ matrix.name }}.mp4" -o "${{ matrix.name }}_out.mp4" -vvv -f "$FPS"
         
       - run: ls -lRh
         continue-on-error: true
