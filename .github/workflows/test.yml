@@ -52,7 +52,7 @@ jobs:
           echo $CONDA/bin >> $GITHUB_PATH
       
       - run: conda update -c defaults conda -y
-      - run: conda install -c conda-forge -f requirements.yml -y
+      - run: conda install -c conda-forge --file requirements.yml -y
       
 #       - name: Process Video
 #         run: |
