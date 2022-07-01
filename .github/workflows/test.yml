@@ -41,6 +41,7 @@ jobs:
         run: yt-dlp -f "$RESOLUTION" -o "${{ matrix.name }}.mp4" "${{ matrix.url }}"
 
       - name: Trim Video
+        if: matrix.start && matrix.start
         run: |
           ffmpeg -i "${{ matrix.name }}.mp4" -ss "${{ matrix.start }}" -to "${{ matrix.end }}" -c copy "${{ matrix.name }}_out.mp4"
           mv "${{ matrix.name }}_out.mp4" "${{ matrix.name }}.mp4"
@@ -53,19 +54,19 @@ jobs:
       - run: conda update -c defaults conda -y
       - run: conda install -c conda-forge -f requirements.yml -y
       
-      - name: Process Video
-        run: |
+#       - name: Process Video
+#         run: |
         
       - run: ls -lRh
         continue-on-error: true
         if: always()
       
-      - name: Release Files
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: "test"
-          name: "Test"
-          files: |
-            *_out.mp4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Release Files
+#         uses: softprops/action-gh-release@v1
+#         with:
+#           tag_name: "test"
+#           name: "Test"
+#           files: |
+#             *_out.mp4
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
