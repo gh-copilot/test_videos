@@ -101,7 +101,8 @@ jobs:
           time=`date --utc '+%F:%Hh'`
           echo "TIME=${time}" >> $GITHUB_ENV
           
-          echo "DUMP_FORMAT=${{ matrix.name }}_${FPS}_fps_${RESOLUTION}_${time}" >> $GITHUB_ENV
+          DUMP_FORMAT="${{ matrix.name }}_${FPS}_fps_${RESOLUTION}_${time}"
+          echo "DUMP_FORMAT=${DUMP_FORMAT}" >> $GITHUB_ENV
           
           tag=$(date --utc '+%Y%H%M%S')
           echo "TAG_NAME=${tag}" >> $GITHUB_ENV
@@ -115,9 +116,9 @@ jobs:
         
       - name: Store Annotated Video
         run: |
-          python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations all  -o "./output/${DUMP_FORMAT}_all_annotations.mp4" -vvv  
-          python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations ids  -o "./output/${DUMP_FORMAT}_ids_annotations.mp4" -vvv  
-          python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations none -o "./output/${DUMP_FORMAT}_position_annotations.mp4" -vvv  
+          python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations all  -o "./output/${DUMP_FORMAT}_all_annotations" -vvv  
+          python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations ids  -o "./output/${DUMP_FORMAT}_ids_annotations" -vvv  
+          python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations none -o "./output/${DUMP_FORMAT}_position_annotations" -vvv  
 
       - name: Store Key Moments Plot
         run: python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-key-moments "./output/${DUMP_FORMAT}_kwy_moments.png" -vvv  
@@ -149,7 +150,7 @@ jobs:
             ffmpeg -i "${video}" -vcodec libx264 -crf 20 "../new/${filename}_x264.mp4"
             ffmpeg -i "${video}" -vcodec libx265 -crf 28 "../new/${filename}_x265.mp4"
             
-            rm video
+            rm "${video}"
             mv ../new/*.mp4 .
           done
       
