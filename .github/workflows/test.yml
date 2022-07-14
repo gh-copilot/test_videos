@@ -7,6 +7,8 @@ on:
 
 env:
   RESOLUTION: '720p'
+  FPS: 'native'
+
 
 jobs:
   down:
@@ -19,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        fps: [10, 20, 'native']
+#         fps: [10, 20, 'native']
         
         include:
           - name: Thor_Reaction
@@ -100,7 +102,7 @@ jobs:
           time=`date --utc '+%F:%Hh'`
           echo "TIME=${time}" >> $GITHUB_ENV
           
-          DUMP_FORMAT="${{ matrix.name }}_${{ matrix.fps }}_fps_${RESOLUTION}_${time}"
+          DUMP_FORMAT="${{ matrix.name }}_${FPS}_fps_${RESOLUTION}_${time}"
           echo "DUMP_FORMAT=${DUMP_FORMAT}" >> $GITHUB_ENV
           
           tag=$(date --utc '+%Y%H%M%S')
@@ -111,7 +113,7 @@ jobs:
           mkdir output
           
       - name: Process Video with Feelback
-        run: python3 feelback_cli.py "${{ matrix.name }}.mp4" -f "${{ matrix.fps }}" --dump "${FEELBACK_DUMP}" -vvv 
+        run: python3 feelback_cli.py "${{ matrix.name }}.mp4" -f "$FPS" --dump "${FEELBACK_DUMP}" -vvv 
         
       - name: Store Annotated Video [All]
         run: python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations all  -o "./output/${DUMP_FORMAT}_all_annotations" -vvv  
@@ -163,8 +165,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: always()
         with:
-          tag_name: "${{ env.TAG_NAME }}_${{ matrix.name }}_${{ matrix.fps }}"
-          name: "${{ matrix.name }} Analysis - ${{ matrix.fps }} fps"
+          tag_name: "${{ env.TAG_NAME }}_${{ matrix.name }}_${{ env.FPS }}"
+          name: "${{ matrix.name }} Analysis - ${{ env.FPS }} fps"
           files: |
             ./output/*
             *.pickle
