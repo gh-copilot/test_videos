@@ -11,7 +11,7 @@ env:
 jobs:
   down:
     runs-on: ubuntu-latest
-    name: "${{ matrix.name }}"
+    name: "${{ matrix.name }} - ${{ matrix.fps }} fps"
     defaults:
       run:
         shell: bash -l {0}
@@ -20,7 +20,6 @@ jobs:
       fail-fast: false
       matrix:
         fps: [10, 20, 'native']
-#         fps: ['native']
         include:
           - name: Hocus_Pocus
             url: 'https://www.youtube.com/watch?v=40SXyDeXV9Y'
