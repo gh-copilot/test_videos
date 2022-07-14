@@ -161,7 +161,7 @@ jobs:
       - name: Release Files
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: "${{ env.TIME }}_${{ matrix.name }}"
+          tag_name: "${{ env.TAG_NAME }}_${{ matrix.name }}"
           name: "${{ matrix.name }} Analysis - ${{ env.FPS }} fps"
           files: |
             ./output/*
