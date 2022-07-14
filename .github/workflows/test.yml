@@ -121,7 +121,7 @@ jobs:
           python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations none -o "./output/${DUMP_FORMAT}_position_annotations" -vvv  
 
       - name: Store Key Moments Plot
-        run: python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-key-moments "./output/${DUMP_FORMAT}_kwy_moments.png" -vvv  
+        run: python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-key-moments "./output/${DUMP_FORMAT}_key_moments.png" -vvv  
 
       - name: Prepare Backend Env
         run: |
@@ -161,8 +161,8 @@ jobs:
       - name: Release Files
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: "${TIME}_${{ matrix.name }}"
-          name: "${{ matrix.name }} Analysis - $FPS fps"
+          tag_name: "${{ env.TIME }}_${{ matrix.name }}"
+          name: "${{ matrix.name }} Analysis - ${{ env.FPS }} fps"
           files: |
             ./output/*
             *.pickle
