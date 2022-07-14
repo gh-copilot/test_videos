@@ -13,7 +13,7 @@ env:
 jobs:
   down:
     runs-on: ubuntu-latest
-    name: "${{ matrix.name }} - ${{ env.FPS }} fps"
+    name: "${{ matrix.name }}"
     defaults:
       run:
         shell: bash -l {0}
