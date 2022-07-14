@@ -20,7 +20,10 @@ jobs:
       fail-fast: false
       matrix:
         fps: [10, 20, 'native']
+        
         include:
+          - name: Thor_Reaction
+          
           - name: Hocus_Pocus
             url: 'https://www.youtube.com/watch?v=40SXyDeXV9Y'
 #             start: '0:05:20'
@@ -46,7 +49,6 @@ jobs:
 #           - name: V9
 #           - name: V10
 #           - name: V11
-          - name: Thor_Reaction
           
     steps:
 
@@ -84,10 +86,6 @@ jobs:
           cp "./download/videos/${{ matrix.name }}.mp4" . || echo ""
           cp "./download/${{ matrix.name }}.mp4" . || echo ""
 
-      - run: ls -lRh
-        continue-on-error: true
-        if: always()
-        
       - name: create feelback conda environment
         uses: conda-incubator/setup-miniconda@v2
         with:
