@@ -49,36 +49,40 @@ jobs:
           
     steps:
 
-      - name: Checkout This Repo
-        uses: actions/checkout@v3
-
       - name: Install Dependencies
         run: |
             sudo apt update
             sudo apt install aria2 ffmpeg python3-mutagen python3-pycryptodome p7zip-full
             pip3 install yt-dlp
 
-      - name: Download Video
-        if: matrix.url
-        run: python3 download.py -f "$RESOLUTION" -o "${{ matrix.name }}" "${{ matrix.url }}"
-
-      - name: Trim Video
-        if: matrix.start && matrix.start
-        run: |
-          ffmpeg -i "${{ matrix.name }}.mp4" -ss "${{ matrix.start }}" -to "${{ matrix.end }}" -c copy "${{ matrix.name }}_out.mp4"
-          mv "${{ matrix.name }}_out.mp4" "${{ matrix.name }}.mp4"
-
-      - run: | 
-          cp "./videos/${{ matrix.name }}.mp4" . || echo ""
-          rm -r ./videos .git*
-
       - name: Checkout Feelback
         uses: actions/checkout@v3
         with:
           repository: ahmedx3/Feelback
           token: ${{ secrets.TOKEN }}
-          clean: false
       
+      - name: Checkout This Repo
+        uses: actions/checkout@v3
+        with:
+          path: download
+
+      - name: Download Video
+        working-directory: download
+        if: matrix.url
+        run: python3 download.py -f "$RESOLUTION" -o "${{ matrix.name }}" "${{ matrix.url }}"
+
+      - name: Trim Video
+        working-directory: download
+        if: matrix.start && matrix.start
+        run: |
+          ffmpeg -i "${{ matrix.name }}.mp4" -ss "${{ matrix.start }}" -to "${{ matrix.end }}" -c copy "${{ matrix.name }}_out.mp4"
+          mv "${{ matrix.name }}_out.mp4" "${{ matrix.name }}.mp4"
+
+      - name: Copy Video File
+        run: |
+          cp "./download/videos/${{ matrix.name }}.mp4" . || echo ""
+          cp "./download/${{ matrix.name }}.mp4" . || echo ""
+
       - run: ls -lRh
         continue-on-error: true
         if: always()
