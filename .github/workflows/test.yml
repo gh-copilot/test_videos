@@ -143,6 +143,8 @@ jobs:
           THUMBNAILS_FOLDER=$PWD/thumbnails
           DATABASE_URL="sqlite:///$PWD/${DUMP_FORMAT}_database.db"
           EOF
+          
+          cat .env
 
       - name: Seed Backend Database
         if: matrix.name != 'Thor_Reaction' && matrix.name != 'V7'
@@ -151,7 +153,7 @@ jobs:
       - name: Seed Backend Database [Thor_Reaction]
         if: matrix.name == 'Thor_Reaction'
         run: |
-          cp ./download/videos/Thor_Trailer.mp4
+          cp ./download/videos/Thor_Trailer.mp4 .
           python3 seed_backend.py "${{ matrix.name }}.mp4" -t Thor_Trailer.mp4 --process
       
       - name: Seed Backend Database [V7]
