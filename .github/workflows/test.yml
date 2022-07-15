@@ -113,18 +113,23 @@ jobs:
           mkdir output
           
       - name: Process Video with Feelback
+        if: matrix.name != 'Thor_Reaction' && matrix.name != 'V7'
         run: python3 feelback_cli.py "${{ matrix.name }}.mp4" -f "$FPS" --dump "${FEELBACK_DUMP}" -vvv 
         
 #       - name: Store Annotated Video [All]
+#         if: matrix.name != 'Thor_Reaction' && matrix.name != 'V7'
 #         run: python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations all  -o "./output/${DUMP_FORMAT}_all_annotations" -vvv  
         
 #       - name: Store Annotated Video [IDs]
+#         if: matrix.name != 'Thor_Reaction' && matrix.name != 'V7'
 #         run: python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations ids  -o "./output/${DUMP_FORMAT}_ids_annotations" -vvv  
         
       - name: Store Annotated Video [Only Faces]
+        if: matrix.name != 'Thor_Reaction' && matrix.name != 'V7'
         run: python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations none -o "./output/${DUMP_FORMAT}_position_annotations" -vvv  
 
       - name: Store Key Moments Plot
+        if: matrix.name != 'Thor_Reaction' && matrix.name != 'V7'
         run: python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-key-moments "./output/${DUMP_FORMAT}_key_moments.png" -vvv  
 
       - name: Prepare Backend Env
@@ -141,25 +146,28 @@ jobs:
 
       - name: Seed Backend Database
         if: matrix.name != 'Thor_Reaction' && matrix.name != 'V7'
-        run: |
-          python3 seed_backend.py "${{ matrix.name }}.mp4" --load-feelback "${FEELBACK_DUMP}"
-          7z a "${DUMP_FORMAT}_thumbnails.zip" ./thumbnails
+        run: python3 seed_backend.py "${{ matrix.name }}.mp4" --load-feelback "${FEELBACK_DUMP}"
 
       - name: Seed Backend Database [Thor_Reaction]
         if: matrix.name == 'Thor_Reaction'
         run: |
           cp ./download/videos/Thor_Trailer.mp4
-          python3 seed_backend.py "${{ matrix.name }}.mp4" --load-feelback "${FEELBACK_DUMP}" -t Thor_Trailer.mp4
-          7z a "${DUMP_FORMAT}_thumbnails.zip" ./thumbnails
+          python3 seed_backend.py "${{ matrix.name }}.mp4" -t Thor_Trailer.mp4 --process
       
       - name: Seed Backend Database [V7]
         if: matrix.name == 'V7'
         run: |
           cp ./download/videos/V7_Slide_Trailer.mp4 .
-          python3 seed_backend.py "${{ matrix.name }}.mp4" --load-feelback "${FEELBACK_DUMP}" -t V7_Slide_Trailer.mp4
+          python3 seed_backend.py "${{ matrix.name }}.mp4" -t V7_Slide_Trailer.mp4 --process
+
+      - name: Compress Backend Data
+        run: |
           7z a "${DUMP_FORMAT}_thumbnails.zip" ./thumbnails
+          7z a "${DUMP_FORMAT}_uploads_annotated.zip" ./uploads_annotated
+          7z a "${DUMP_FORMAT}_uploads.zip" ./uploads
       
       - name: Encode Videos to reduce their size
+        if: matrix.name != 'Thor_Reaction' && matrix.name != 'V7'
         run: |
           mkdir new
           cd output
@@ -185,6 +193,6 @@ jobs:
             ./output/*
             *.pickle
             *.db
-            *thumbnails*.zip
+            *.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
