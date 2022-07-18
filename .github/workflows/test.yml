@@ -26,31 +26,31 @@ jobs:
         include:
           - name: Thor_Reaction
           
-#           - name: Hocus_Pocus
-#             url: 'https://www.youtube.com/watch?v=40SXyDeXV9Y'
-# #             start: '0:05:20'
-# #             end: '0:07:10'
+          - name: Hocus_Pocus
+            url: 'https://www.youtube.com/watch?v=40SXyDeXV9Y'
+#             start: '0:05:20'
+#             end: '0:07:10'
 
-#           - name: Peaky_Blinders
-#             url: 'https://www.youtube.com/watch?v=LosFc1-eva4'
+          - name: Peaky_Blinders
+            url: 'https://www.youtube.com/watch?v=LosFc1-eva4'
           
-#           - name: Avengers_Endgame
-#             url: 'https://www.youtube.com/watch?v=SdC-4x0-ESc'
+          - name: Avengers_Endgame
+            url: 'https://www.youtube.com/watch?v=SdC-4x0-ESc'
           
-#           - name: Hell_March_Indian_Army
-#             url: 'https://www.youtube.com/watch?v=geKIYFkqkh0'
+          - name: Hell_March_Indian_Army
+            url: 'https://www.youtube.com/watch?v=geKIYFkqkh0'
 
-#           - name: V1
-#           - name: V2
-#           - name: V3
-#           - name: V4
-#           - name: V5
-#           - name: V6
-#           - name: V7
-#           - name: V8
-#           - name: V9
-#           - name: V10
-#           - name: V11
+          - name: V1
+          - name: V2
+          - name: V3
+          - name: V4
+          - name: V5
+          - name: V6
+          - name: V7
+          - name: V8
+          - name: V9
+          - name: V10
+          - name: V11
           
     steps:
 
@@ -115,12 +115,10 @@ jobs:
       - name: Process Video with Feelback
         run: python3 feelback_cli.py "${{ matrix.name }}.mp4" -f "$FPS" --dump "${FEELBACK_DUMP}" -vvv 
         
-#       - name: Store Annotated Video [All]
-#         if: matrix.name != 'Thor_Reaction' && matrix.name != 'V7'
-#         run: python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations all  -o "./output/${DUMP_FORMAT}_all_annotations" -vvv  
+      - name: Store Annotated Video [All]
+        run: python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations all  -o "./output/${DUMP_FORMAT}_all_annotations" -vvv  
         
 #       - name: Store Annotated Video [IDs]
-#         if: matrix.name != 'Thor_Reaction' && matrix.name != 'V7'
 #         run: python3 feelback_cli.py "${{ matrix.name }}.mp4" --load "${FEELBACK_DUMP}" --output-annotations ids  -o "./output/${DUMP_FORMAT}_ids_annotations" -vvv  
         
       - name: Store Annotated Video [Only Faces]
